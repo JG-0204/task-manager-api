@@ -1,6 +1,8 @@
 import http from 'http';
 import crypto from 'crypto';
 
+import { urlMatcher, doesExist } from './utils.js';
+
 let tasks = [
     {
         id: crypto.randomUUID(),
@@ -49,25 +51,41 @@ const server = http.createServer((req, res) => {
         }).on('end', () => {
             const newTask = JSON.parse(body);
             tasks.push(newTask);
+            res.statusCode = 200;
         });
     }
 
-    if (
-        req.method === 'PUT' &&
-        req.url.match(
-            /\/tasks\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
-        )
-    ) {
+    if (req.method === 'PUT' && urlMatcher(req.url)) {
         const id = req.url.split('/')[2];
 
-        let body = '';
-        req.on('data', (chunk) => {
-            body += chunk.toString();
-        }).on('end', () => {
-            const currTask = JSON.parse(body);
-            currTask.id = id;
-            tasks = tasks.map((task) => (task.id !== id ? task : currTask));
-        });
+        if (!doesExist(tasks, id)) {
+            res.statusCode = 404;
+            res.write(JSON.stringify({ message: 'Task not found.' }));
+        } else {
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk.toString();
+            }).on('end', () => {
+                const currTask = JSON.parse(body);
+                currTask.id = id;
+                tasks = tasks.map((task) => (task.id !== id ? task : currTask));
+                res.statusCode = 200;
+            });
+        }
+    }
+
+    if (req.method === 'DELETE' && urlMatcher(req.url)) {
+        const id = req.url.split('/')[2];
+
+        if (!doesExist(tasks, id)) {
+            res.statusCode = 404;
+            res.write(JSON.stringify({ message: 'Task not found.' }));
+        } else {
+            const index = tasks.findIndex((task) => task.id === id);
+
+            tasks = tasks.toSpliced(index, 1);
+            res.statusCode = 200;
+        }
     }
 
     res.end();
