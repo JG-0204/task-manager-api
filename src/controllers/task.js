@@ -43,6 +43,23 @@ export const getTasksHandler = (req, res) => {
     res.end(JSON.stringify(tasks));
 };
 
+export const getTaskHandler = (req, res) => {
+    const id = req.url.split('/')[3];
+    const task = tasks.find((task) => task.id === id);
+    if (!doesExist(tasks, id)) {
+        res.writeHead(404, {
+            'Content-Type': 'application/json',
+        });
+        res.write(JSON.stringify({ message: 'Task not found.' }));
+    } else {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(JSON.stringify(task)),
+        });
+        res.end(JSON.stringify(task));
+    }
+};
+
 export const updateTaskHandler = (req, res) => {
     const id = req.url.split('/')[3];
 

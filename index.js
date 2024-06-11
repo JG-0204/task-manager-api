@@ -4,26 +4,32 @@ import { urlMatcher } from './src/utils.js';
 
 import {
     getTasksHandler,
+    getTaskHandler,
     addTaskHandler,
     updateTaskHandler,
     deleteTaskHandler,
     notFoundHandler,
 } from './src/controllers/task.js';
 
+const PORT = process.env.PORT;
+
 const server = http.createServer((req, res) => {
-    if (req.method === 'GET' && req.url === '/api/tasks') {
+    const { method, url } = req;
+
+    if (method === 'GET' && url === '/api/tasks') {
         getTasksHandler(req, res);
-    } else if (req.method === 'POST' && req.url === '/api/tasks') {
+    } else if (method === 'GET' && urlMatcher(url)) {
+        getTaskHandler(req, res);
+    } else if (method === 'POST' && url === '/api/tasks') {
         addTaskHandler(req, res);
-    } else if (req.method === 'PUT' && urlMatcher(req.url)) {
+    } else if (method === 'PUT' && urlMatcher(url)) {
         updateTaskHandler(req, res);
-    } else if (req.method === 'DELETE' && urlMatcher(req.url)) {
+    } else if (method === 'DELETE' && urlMatcher(url)) {
         deleteTaskHandler(req, res);
     } else {
         notFoundHandler(req, res);
     }
 });
-
-server.listen(5555, () => {
-    console.log('Server listening from port 5555');
+server.listen(PORT, () => {
+    console.log(`Server running in port ${PORT}`);
 });
