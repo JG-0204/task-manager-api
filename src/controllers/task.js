@@ -70,15 +70,17 @@ export const updateTaskHandler = (req, res) => {
         res.write(JSON.stringify({ message: 'Task not found.' }));
     } else {
         createRequestBody(req, res, (body, res) => {
-            const currTask = JSON.parse(body);
-            currTask.id = id;
+            const currTask = tasks.find((task) => task.id === id);
+            const updatedTask = Object.assign(currTask, JSON.parse(body));
             tasks = tasks.map((task) => (task.id !== id ? task : currTask));
 
             res.writeHead(200, {
                 'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(JSON.stringify(currTask)),
+                'Content-Length': Buffer.byteLength(
+                    JSON.stringify(updatedTask)
+                ),
             });
-            res.write(JSON.stringify(currTask));
+            res.write(JSON.stringify(updatedTask));
         });
     }
 };

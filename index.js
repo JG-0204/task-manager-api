@@ -30,6 +30,7 @@ const server = http.createServer((req, res) => {
         notFoundHandler(req, res);
     }
 });
+
 server.listen(PORT, () => {
     console.log(`Server running in port ${PORT}`);
 });
