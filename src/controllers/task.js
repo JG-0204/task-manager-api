@@ -10,7 +10,7 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+    status: 'pending',
   },
   {
     id: crypto.randomUUID(),
@@ -19,7 +19,7 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+    status: 'pending',
   },
   {
     id: crypto.randomUUID(),
@@ -28,7 +28,8 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+
+    status: 'pending',
   },
   {
     id: crypto.randomUUID(),
@@ -37,7 +38,7 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+    status: 'pending',
   },
   {
     id: crypto.randomUUID(),
@@ -46,7 +47,7 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+    status: 'pending',
   },
   {
     id: crypto.randomUUID(),
@@ -55,7 +56,7 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-    completed: false,
+    status: 'pending',
   },
 ];
 
@@ -107,6 +108,29 @@ export const updateTaskHandler = (req, res) => {
   }
 };
 
+export const updateTaskStatusHandler = (req, res) => {
+  const id = req.url.split('/')[3];
+
+  if (!doesExist(tasks, id)) {
+    res.writeHead(404, {
+      'Content-Type': 'application/json',
+    });
+    res.write(JSON.stringify({ message: 'Task not found.' }));
+  } else {
+    createRequestBody(req, res, (body, res) => {
+      const currTask = tasks.find((task) => task.id === id);
+      const updatedTask = Object.assign(currTask, JSON.parse(body));
+      tasks = tasks.map((task) => (task.id !== id ? task : currTask));
+
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(updatedTask)),
+      });
+      res.end(JSON.stringify(updatedTask));
+    });
+  }
+};
+
 export const deleteTaskHandler = (req, res) => {
   const id = req.url.split('/')[3];
 
@@ -127,7 +151,7 @@ export const addTaskHandler = (req, res) => {
     const newTask = JSON.parse(body);
     newTask.id = crypto.randomUUID();
     newTask.dateAdded = getCurrentDate();
-    newTask.completed = false;
+    newTask.status = 'pending';
     tasks = tasks.concat(newTask);
     res.writeHead(200, {
       'Content-Type': 'application/json',

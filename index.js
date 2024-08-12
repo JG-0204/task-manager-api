@@ -7,6 +7,7 @@ import {
   getTaskHandler,
   addTaskHandler,
   updateTaskHandler,
+  updateTaskStatusHandler,
   deleteTaskHandler,
   notFoundHandler,
 } from './src/controllers/task.js';
@@ -17,7 +18,7 @@ function handleCors(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader(
       'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS'
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS'
     );
     res.setHeader(
       'Access-Control-Allow-Headers',
@@ -44,6 +45,8 @@ const server = http.createServer(async (req, res) => {
     addTaskHandler(req, res);
   } else if (method === 'PUT' && urlMatcher(url)) {
     updateTaskHandler(req, res);
+  } else if (method === 'PATCH' && urlMatcher(url)) {
+    updateTaskStatusHandler(req, res);
   } else if (method === 'DELETE' && urlMatcher(url)) {
     deleteTaskHandler(req, res);
   } else {
