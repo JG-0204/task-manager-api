@@ -7,7 +7,6 @@ import {
   getTaskHandler,
   addTaskHandler,
   updateTaskHandler,
-  updateTaskStatusHandler,
   deleteTaskHandler,
   notFoundHandler,
 } from './src/controllers/task.js';
@@ -46,7 +45,7 @@ const server = http.createServer(async (req, res) => {
   } else if (method === 'PUT' && urlMatcher(url)) {
     updateTaskHandler(req, res);
   } else if (method === 'PATCH' && urlMatcher(url)) {
-    updateTaskStatusHandler(req, res);
+    updateTaskHandler(req, res);
   } else if (method === 'DELETE' && urlMatcher(url)) {
     deleteTaskHandler(req, res);
   } else {
