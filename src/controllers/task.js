@@ -11,6 +11,10 @@ let tasks = [
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
     status: 'pending',
+    subTasks: [
+      { title: 'get something', completed: false, id: crypto.randomUUID() },
+      { title: 'get something', completed: false, id: crypto.randomUUID() },
+    ],
   },
   {
     id: crypto.randomUUID(),
@@ -20,6 +24,7 @@ let tasks = [
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
     status: 'pending',
+    subTasks: [],
   },
   {
     id: crypto.randomUUID(),
@@ -28,8 +33,8 @@ let tasks = [
     priority: 'low',
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
-
     status: 'pending',
+    subTasks: [],
   },
   {
     id: crypto.randomUUID(),
@@ -39,6 +44,7 @@ let tasks = [
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
     status: 'pending',
+    subTasks: [],
   },
   {
     id: crypto.randomUUID(),
@@ -48,6 +54,7 @@ let tasks = [
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
     status: 'pending',
+    subTasks: [],
   },
   {
     id: crypto.randomUUID(),
@@ -57,6 +64,7 @@ let tasks = [
     dueDate: '8/16/24',
     dateAdded: '8/10/24',
     status: 'pending',
+    subTasks: [],
   },
 ];
 
@@ -128,7 +136,7 @@ export const addTaskHandler = (req, res) => {
     const newTask = JSON.parse(body);
     newTask.id = crypto.randomUUID();
     newTask.dateAdded = getCurrentDate();
-    newTask.status = 'pending';
+    newTask.subTasks = [];
     tasks = tasks.concat(newTask);
     res.writeHead(200, {
       'Content-Type': 'application/json',
